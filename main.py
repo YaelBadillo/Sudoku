@@ -1,11 +1,9 @@
-from table import TABLE, T2
-from sudoku import Sudoku
+from table import t4
+from sudoku import SamuraiSudoku
 
 
 def main():
-    s1 = Sudoku(TABLE[:])
-    s1.solve()
-    s1.print_table()
+    s1 = SamuraiSudoku(t4)
 
 
 if __name__ == '__main__':
