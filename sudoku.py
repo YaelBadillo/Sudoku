@@ -166,7 +166,7 @@ class SamuraiSudoku:
     def __init__(self, boards: dict):
         self.__boards = boards
         self.__sequence_list = self.__listing_sequence()
-        self.__sodokus = []
+        self.__sudokus = []
 
     def get_boards(self) -> dict:
         return self.__boards
@@ -243,7 +243,7 @@ class SamuraiSudoku:
                     b2[i-6][j-6] = b1[i][j]
 
     def __copy(self, b1, b2, region):
-        board_to_copy = self.__sodokus[b1].get_maked_board()
+        board_to_copy = self.__sudokus[b1].get_maked_board()
         self.__copy_region(
             board_to_copy,
             self.__boards[b2],
@@ -279,17 +279,27 @@ class SamuraiSudoku:
                     self.__sequence_list[i]
                 )
 
+    def __sort_boards(self):
+        sudokus_dict = {}
+        for i in range(len(self.__sequence_list)):
+            sudokus_dict[self.__sequence_list[i]] = self.__sudokus[i]
+
+        self.__sudokus.clear()
+        for i in range(len(sudokus_dict)):
+            self.__sudokus.append(sudokus_dict[i])
+
+    def __join_boards(self):
+        pass
+
     def __make_boards(self):
         for i in range(5):
             self.__choose_board(i)
 
             board = Sudoku(self.__boards[self.__sequence_list[i]])
-            self.__sodokus.append(board)
-            self.__sodokus[i].solve()
+            self.__sudokus.append(board)
+            self.__sudokus[i].solve()
 
-        for i in range(5):
-            self.__sodokus[i].print_maked_board()
-            print('')
+        self.__sort_boards()
 
     def solve(self):
         self.__make_boards()
