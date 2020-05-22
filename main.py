@@ -1,9 +1,10 @@
-from table import t4
+from table import *
 from sudoku import SamuraiSudoku
 
 
 def main():
-    s1 = SamuraiSudoku(t4)
+    s1 = SamuraiSudoku(T3)
+    s1.solve()
 
 
 if __name__ == '__main__':
