@@ -167,6 +167,7 @@ class SamuraiSudoku:
         self.__boards = boards
         self.__sequence_list = self.__listing_sequence()
         self.__sudokus = []
+        self.__samurai_sudoku = [[' ' for i in range(21)] for i in range(21)]
 
     def get_boards(self) -> dict:
         return self.__boards
@@ -288,8 +289,41 @@ class SamuraiSudoku:
         for i in range(len(sudokus_dict)):
             self.__sudokus.append(sudokus_dict[i])
 
+    def __print_table(self):
+        for i in range(21):
+            print(
+                '-------------------------------------------' +
+                '------------------------------------------'
+            )
+            for j in range(21):
+                if self.__samurai_sudoku[i][j] != ' ':
+                    print('| {} '.format(self.__samurai_sudoku[i][j]), end='')
+                else:
+                    print('    ', end='')
+            print('|')
+        print(
+            '-------------------------------------------' +
+            '------------------------------------------'
+        )
+
     def __join_boards(self):
-        pass
+        start = {  # index to star
+            0: ((0, 9), (0, 9)),
+            1: ((0, 9), (12, 21)),
+            2: ((12, 21), (0, 9)),
+            3: ((12, 21), (12, 21)),
+            4: ((6, 15), (6, 15))
+        }
+
+        for k in range(len(self.__sudokus)):
+            y_label = 0
+            board = self.__sudokus[k].get_maked_board()
+            for i in range(start[k][0][0], start[k][0][1]):
+                x_label = 0
+                for j in range(start[k][1][0], start[k][1][1]):
+                    self.__samurai_sudoku[i][j] = board[y_label][x_label]
+                    x_label += 1
+                y_label += 1
 
     def __make_boards(self):
         for i in range(5):
@@ -300,6 +334,8 @@ class SamuraiSudoku:
             self.__sudokus[i].solve()
 
         self.__sort_boards()
+        self.__join_boards()
+        self.__print_table()
 
     def solve(self):
         self.__make_boards()

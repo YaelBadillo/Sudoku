@@ -3,7 +3,7 @@ from sudoku import SamuraiSudoku
 
 
 def main():
-    s1 = SamuraiSudoku(T3)
+    s1 = SamuraiSudoku(samurai)
     s1.solve()
 
 
