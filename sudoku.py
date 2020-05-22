@@ -65,7 +65,7 @@ class Sudoku:
         print('-------------------------------------')
 
     ''' ___is_empty()
-    Verifica si la posición s = (i, j) del tablero self.__board, 
+    Verifica si la posición s = (i, j) del tablero self.__board,
     está vacía
     '''
 
@@ -73,7 +73,7 @@ class Sudoku:
         return True if self.__board[s[0]][s[1]] == ' ' else False
 
     ''' __is_valid()
-    Verifica si el numero "number" es válido en la posición 
+    Verifica si el numero "number" es válido en la posición
     s = (i, j)
     '''
 
@@ -165,15 +165,15 @@ class Sudoku:
 class SamuraiSudoku:
     def __init__(self, boards: dict):
         self.__boards = boards
+        self.__sequence_list = self.__listing_sequence()
         self.__sodokus = []
-        self.__maked_boards = []
 
     def get_boards(self) -> dict:
         return self.__boards
 
     '''
     Recorre una tabla de sudoku y retorna True sí tiene números
-    pista o retorna False si está vacía.    
+    pista o retorna False si está vacía.
     '''
 
     def __traverse_board(self, board: list) -> bool:
@@ -209,7 +209,7 @@ class SamuraiSudoku:
     Genera una lista con la secuencia de tablas a resolver.
     '''
 
-    def __list_sequence(self) -> list:
+    def __listing_sequence(self) -> list:
         board_to_start = self.__verify_boards()
 
         sequencing_list = [board_to_start]
@@ -223,16 +223,8 @@ class SamuraiSudoku:
         print(sequencing_list)
         return sequencing_list
 
-    def __copy(self, b1, b2, region):
-        board_to_copy = self.__sodokus[b1].get_maked_board()
-        self.__copy_region(
-            board_to_copy,
-            self.__boards[b2],
-            region
-        )
-
     '''
-    Copia de tabla "b1" a la tabla "b2" la región específica "region_copy" 
+    Copia de tabla "b1" a la tabla "b2" la región específica "region_copy"
     '''
 
     def __copy_region(self, b1: list, b2: list, region_copy: int):
@@ -250,27 +242,48 @@ class SamuraiSudoku:
                 elif region_copy == 3 and (i // 3 == 2 and j // 3 == 2):
                     b2[i-6][j-6] = b1[i][j]
 
-    def __make_boards(self):
-        regions = {
+    def __copy(self, b1, b2, region):
+        board_to_copy = self.__sodokus[b1].get_maked_board()
+        self.__copy_region(
+            board_to_copy,
+            self.__boards[b2],
+            region
+        )
+
+    def __choose_board(self, i):
+        inverted_regions = {
             0: 3,
             1: 2,
             2: 1,
             3: 0
         }
 
-        list_sequence = self.__list_sequence()
+        if self.__sequence_list[0] == 4 and self.__sequence_list[i] != 4:
+            self.__copy(
+                0,
+                self.__sequence_list[i],
+                self.__sequence_list[i]
+            )
+        else:
+            if self.__sequence_list[i] == 4 and i != 0:
+                self.__copy(
+                    0,
+                    self.__sequence_list[1],
+                    inverted_regions[self.__sequence_list[i-1]]
+                )
 
+            elif self.__sequence_list[i] != 4 and i != 0:
+                self.__copy(
+                    1,
+                    self.__sequence_list[i],
+                    self.__sequence_list[i]
+                )
+
+    def __make_boards(self):
         for i in range(5):
-            if list_sequence[0] == 4 and list_sequence[i] != 4:
-                self.__copy(0, list_sequence[i], list_sequence[i])
-            else:
-                if list_sequence[i] == 4 and i != 0:
-                    self.__copy(0, list_sequence[1],
-                                regions[list_sequence[i-1]])
-                elif list_sequence[i] != 4 and i != 0:
-                    self.__copy(1, list_sequence[i], list_sequence[i])
+            self.__choose_board(i)
 
-            board = Sudoku(self.__boards[list_sequence[i]])
+            board = Sudoku(self.__boards[self.__sequence_list[i]])
             self.__sodokus.append(board)
             self.__sodokus[i].solve()
 
