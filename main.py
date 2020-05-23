@@ -3,9 +3,9 @@ from sudoku import SamuraiSudoku
 
 
 def main():
-    s1 = SamuraiSudoku(samurai)
-    s1.solve()
-    s1.print_table()
+    sudoku = SamuraiSudoku(TABLA_1)
+    sudoku.solve()
+    sudoku.print_maked_table()
 
 
 if __name__ == '__main__':

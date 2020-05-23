@@ -188,6 +188,8 @@ class SamuraiSudoku:
     def __init__(self, boards: dict):
         # Lista de tablas sin hacer.
         self.__boards = boards
+        # Lista de tablas iniciales.
+        self.__empty_boards = boards
         # Lista de orden de tablas a hacer.
         self.__sequence_list = self.__listing_sequence()
         # Lista de objetos Sudoku de cada tabla.
@@ -374,7 +376,8 @@ class SamuraiSudoku:
 
     def __assign_color(self, i, j):
         '''
-        Asigna un color a cada región al imprimir la tabla FINAL.
+        Asigna un color a cada región al imprimir la tabla FINAL 
+        dependiendo la región.
         '''
 
         i_key = i // 3
@@ -388,7 +391,7 @@ class SamuraiSudoku:
 
         return -1
 
-    def print_table(self):
+    def print_maked_table(self):
         for i in range(21):
             print(
                 '-------------------------------------------' +
@@ -403,8 +406,9 @@ class SamuraiSudoku:
                     ),
                         end=''
                     )
+
                 else:
-                    print('    ', end='')
+                    print('|   ', end='')
             print('|')
         print(
             '-------------------------------------------' +
