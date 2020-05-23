@@ -20,21 +20,21 @@ class Sudoku:
     def get_maked_board(self) -> list:
         return self.__maked_board
 
-    ''' __assign_color()
-    Asinga el color a un numero dependiendo su posición s = (i, j)
-    '''
-
     def __assign_color(self, s) -> str:
+        ''' __assign_color()
+        Asinga el color a un numero dependiendo su posición s = (i, j).
+        '''
+
         i_key = s[0] // 3
         j_key = s[1] // 3
 
-        return colors[str(i_key) + str(j_key)]
-
-    ''' print_board()
-    Imprime la tabla inicial, con formato
-    '''
+        return SUDOKU_COLORS[str(i_key) + str(j_key)]
 
     def print_board(self):
+        ''' print_board()
+        Imprime la tabla inicial, con formato.
+        '''
+
         for i in range(self.__row_len):
             print('-------------------------------------')
             for j in range(self.__col_len):
@@ -47,11 +47,11 @@ class Sudoku:
             print('|')
         print('-------------------------------------')
 
-    ''' print_maked_board()
-    Imprime la tabla llena, con formato
-    '''
-
     def print_maked_board(self):
+        ''' print_maked_board()
+        Imprime la tabla llena, con formato.
+        '''
+
         for i in range(self.__row_len):
             print('-------------------------------------')
             for j in range(self.__col_len):
@@ -64,20 +64,20 @@ class Sudoku:
             print('|')
         print('-------------------------------------')
 
-    ''' ___is_empty()
-    Verifica si la posición s = (i, j) del tablero self.__board,
-    está vacía
-    '''
-
     def __is_empty(self, s: tuple) -> bool:
+        ''' ___is_empty()
+        Verifica si la posición s = (i, j) del tablero self.__board,
+        está vacía.
+        '''
+
         return True if self.__board[s[0]][s[1]] == ' ' else False
 
-    ''' __is_valid()
-    Verifica si el numero "number" es válido en la posición
-    s = (i, j)
-    '''
-
     def __is_valid(self, s: tuple, number: int) -> bool:
+        ''' __is_valid()
+        Verifica si el numero "number" es válido en la posición
+        s = (i, j).
+        '''
+
         number = str(number)
 
         # Verifica la FILA de la posición s = (i, j)
@@ -90,7 +90,7 @@ class Sudoku:
             if number == self.__board[i][s[1]] and i != s[0]:
                 return False
 
-        # Verifica la REGIÓN de 3x3
+        # Verifica la REGIÓN de 3x3.
         i_label = s[0] // 3
         j_label = s[1] // 3
         for ii in range(len(self.__board)):
@@ -101,83 +101,109 @@ class Sudoku:
 
         return True
 
-    ''' __next_step()
-    Avanza a la siguiente posición del tablero. Primero por COLUMNAS
-    luego por FILA
-    '''
-
     def __next_step(self, s: tuple) -> tuple:
+        ''' __next_step()
+        Avanza a la siguiente posición del tablero. Primero por COLUMNAS
+        luego por FILA.
+        '''
+
         i = s[0] if s[1] < self.__col_len-1 else s[0]+1
         j = s[1]+1 if s[1] < self.__col_len-1 else 0
 
         return (i, j)
 
-    ''' __copy_board()
-    Una vez completada la tabla self.__board se copia a
-    self.__maked_board para no perder la tabla
-    '''
-
     def __copy_board(self):
+        ''' __copy_board()
+        Una vez completada la tabla self.__board se copia a
+        self.__maked_board para no perder la tabla.
+        '''
+
         for row in self.__board:
             self.__maked_board.append(row.copy())
 
-    ''' __backtracking()
-    Es el algoritmo de Backtracking para completar la tabla
-    de sudoku
-    '''
-
     def __backtracking(self, s: tuple) -> bool:
+        ''' __backtracking()
+        Es el algoritmo de Backtracking para completar la tabla
+        de sudoku.
+        '''
+
+        # Retorna True si los indices "s = (i, j)" se encuentran
+        # en la última posición de self.__board.
         if s == (self.__row_len, self.__col_len-1):
             go_on = True
         else:
             go_on = False
 
         number = 1
+        # Recorre todos los números posibles del 1 al 9.
         while number <= self.__col_len and go_on == False:
+            # Retorna True si la posición actual "s = (i, j)" se
+            # encuentra vacía.
             if self.__is_empty(s):
+                # Asigna el numero "number" en la posición actual "s"
+                # en la tabla "self.__board".
                 self.__board[s[0]][s[1]] = str(number)
 
+                # Retorna True sí el número "number" es válido en la
+                # posicion "s = (i, j)" de la tabla.
                 if self.__is_valid(s, number):
-
+                    # Verifica si los indices ya llegaron a su última
+                    # posición. Copiará la tabla y retornará
+                    # True.
                     if s == (self.__row_len-1, self.__col_len-1):
-                        self.__copy_board()
-                        go_on = True
+                        self.__copy_board()  # Copia la tabla para no perder avances
+                        go_on = True        # Retorna True para terminar el Backtracking
 
                     else:
+                        # Si la tabla aun no se llena, vuelve a llamarse la función
+                        # para la siguiente posición "s = (i, j)" del tablero.
                         go_on = self.__backtracking(self.__next_step(s))
 
+                # Sí el número no es válido se vuelve a vaciar la posición.
                 self.__board[s[0]][s[1]] = ' '
-                number += 1
+                number += 1  # Siguiente número en caso de no ser válido el actual
             else:
+                # Verifica si los indices ya llegaron a su última
+                # posición. Copiará la tabla y retornará
+                # True.
                 if s == (self.__row_len-1, self.__col_len-1):
                     self.__copy_board()
                     go_on = True
 
                 else:
+                    # Aumenta una posición en el tablero si aun no se llega a la
+                    # última posición.
                     s = self.__next_step(s)
 
         return go_on
 
     def solve(self):
+        '''
+        Función pública para resolver la tabla.
+        '''
         return self.__backtracking((0, 0))
 
 
 class SamuraiSudoku:
     def __init__(self, boards: dict):
+        # Lista de tablas sin hacer.
         self.__boards = boards
+        # Lista de orden de tablas a hacer.
         self.__sequence_list = self.__listing_sequence()
+        # Lista de objetos Sudoku de cada tabla.
         self.__sudokus = []
+        # Tabla Final de 21x21.
         self.__samurai_sudoku = [[' ' for i in range(21)] for i in range(21)]
 
     def get_boards(self) -> dict:
         return self.__boards
 
-    '''
-    Recorre una tabla de sudoku y retorna True sí tiene números
-    pista o retorna False si está vacía.
-    '''
-
     def __traverse_board(self, board: list) -> bool:
+        '''
+        Recorre una tabla de sudoku y retorna True sí tiene números
+        pista o retorna False si está vacía.
+        '''
+
         row_len = len(board)
         col_len = len(board[0])
 
@@ -188,11 +214,11 @@ class SamuraiSudoku:
 
         return False
 
-    '''
-    Retorna el número de la primera tabla a resolver.
-    '''
-
     def __verify_boards(self) -> int:
+        '''
+        Retorna el número de la primera tabla a resolver.
+        '''
+
         with_numbers = []
         for i in range(5):
             if self.__traverse_board(self.__boards[i]):
@@ -206,11 +232,11 @@ class SamuraiSudoku:
         else:
             return 4
 
-    '''
-    Genera una lista con la secuencia de tablas a resolver.
-    '''
-
     def __listing_sequence(self) -> list:
+        '''
+        Genera una lista con la secuencia de tablas a resolver.
+        '''
+
         board_to_start = self.__verify_boards()
 
         sequencing_list = [board_to_start]
@@ -221,14 +247,13 @@ class SamuraiSudoku:
             if i != board_to_start:
                 sequencing_list.append(i)
 
-        print(sequencing_list)
         return sequencing_list
 
-    '''
-    Copia de tabla "b1" a la tabla "b2" la región específica "region_copy"
-    '''
-
     def __copy_region(self, b1: list, b2: list, region_copy: int):
+        '''
+        Copia de tabla "b1" a la tabla "b2" la región específica "region_copy".
+        '''
+
         row_len = len(b1)
         col_len = len(b1[0])
 
@@ -243,15 +268,25 @@ class SamuraiSudoku:
                 elif region_copy == 3 and (i // 3 == 2 and j // 3 == 2):
                     b2[i-6][j-6] = b1[i][j]
 
-    def __copy(self, b1, b2, region):
-        board_to_copy = self.__sudokus[b1].get_maked_board()
+    def __copy(self, board_1, board_2, region):
+        '''
+        Copia la región de la tabla "board_1" a la tabla "board_2".
+        '''
+
+        board_to_copy = self.__sudokus[board_1].get_maked_board()
         self.__copy_region(
             board_to_copy,
-            self.__boards[b2],
+            self.__boards[board_2],
             region
         )
 
     def __choose_board(self, i):
+        '''
+        Elige la región a copiar de tabla 1 a tabla 2 dependiendo cual sea
+        la tabla 1 (tabla llena).
+
+        '''
+
         inverted_regions = {
             0: 3,
             1: 2,
@@ -280,7 +315,24 @@ class SamuraiSudoku:
                     self.__sequence_list[i]
                 )
 
+    def __make_boards(self):
+        '''
+        Llena todas las tablas y las guarfa en self.__sudokus.
+        '''
+        for i in range(5):
+            self.__choose_board(i)
+
+            board = Sudoku(self.__boards[self.__sequence_list[i]])
+            self.__sudokus.append(board)
+            self.__sudokus[i].solve()
+
     def __sort_boards(self):
+        '''
+        Ordenas las tablas dejando en última posición a la 
+        tabla central.
+        '''
+        self.__make_boards()
+
         sudokus_dict = {}
         for i in range(len(self.__sequence_list)):
             sudokus_dict[self.__sequence_list[i]] = self.__sudokus[i]
@@ -289,7 +341,54 @@ class SamuraiSudoku:
         for i in range(len(sudokus_dict)):
             self.__sudokus.append(sudokus_dict[i])
 
-    def __print_table(self):
+    def __join_boards(self):
+        '''
+        Une las 5 tablas en una única tabla "self.__samurai_sudoku" de 21x21.
+        '''
+
+        # Primero las ordenamos
+        self.__sort_boards()
+
+        # Primera posición para cada tabla en la "self.__samurai_sudoku".
+        start = {
+            0: (0, 0),          # TABLA 0
+            1: (0, 12),         # TABLA 1
+            2: (12, 0),         # TABLA 2
+            3: (12, 12),        # TABLA 3
+            4: (6, 6)           # TABLA 4
+        }
+
+        # Recorremos todas las tablas
+        for number in range(len(self.__sudokus)):
+            board = self.__sudokus[number].get_maked_board()
+
+            # Posición inicial de fila en tabla de 21x21
+            ii = start[number][0]
+            for i in range(9):
+                # Posición inicial de columna en tabla de 21x21
+                jj = start[number][1]
+                for j in range(9):
+                    self.__samurai_sudoku[ii][jj] = board[i][j]
+                    jj += 1
+                ii += 1
+
+    def __assign_color(self, i, j):
+        '''
+        Asigna un color a cada región al imprimir la tabla FINAL.
+        '''
+
+        i_key = i // 3
+        j_key = j // 3
+        region = str(i_key) + str(j_key)
+
+        color_keys = list(SAMURAI_COLORS)
+        for key in color_keys:
+            if region in key:
+                return SAMURAI_COLORS[key]
+
+        return -1
+
+    def print_table(self):
         for i in range(21):
             print(
                 '-------------------------------------------' +
@@ -297,7 +396,13 @@ class SamuraiSudoku:
             )
             for j in range(21):
                 if self.__samurai_sudoku[i][j] != ' ':
-                    print('| {} '.format(self.__samurai_sudoku[i][j]), end='')
+                    print('| {}{}{} '.format(
+                        self.__assign_color(i, j),
+                        self.__samurai_sudoku[i][j],
+                        RESET
+                    ),
+                        end=''
+                    )
                 else:
                     print('    ', end='')
             print('|')
@@ -306,36 +411,5 @@ class SamuraiSudoku:
             '------------------------------------------'
         )
 
-    def __join_boards(self):
-        start = {  # index to star
-            0: ((0, 9), (0, 9)),
-            1: ((0, 9), (12, 21)),
-            2: ((12, 21), (0, 9)),
-            3: ((12, 21), (12, 21)),
-            4: ((6, 15), (6, 15))
-        }
-
-        for k in range(len(self.__sudokus)):
-            y_label = 0
-            board = self.__sudokus[k].get_maked_board()
-            for i in range(start[k][0][0], start[k][0][1]):
-                x_label = 0
-                for j in range(start[k][1][0], start[k][1][1]):
-                    self.__samurai_sudoku[i][j] = board[y_label][x_label]
-                    x_label += 1
-                y_label += 1
-
-    def __make_boards(self):
-        for i in range(5):
-            self.__choose_board(i)
-
-            board = Sudoku(self.__boards[self.__sequence_list[i]])
-            self.__sudokus.append(board)
-            self.__sudokus[i].solve()
-
-        self.__sort_boards()
-        self.__join_boards()
-        self.__print_table()
-
     def solve(self):
-        self.__make_boards()
+        self.__join_boards()
