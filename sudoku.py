@@ -1,6 +1,3 @@
-from colors import *
-
-
 class Sudoku:
     def __init__(self, board: list):
         self.__board = board                            # Tabla sin hacer
@@ -20,6 +17,7 @@ class Sudoku:
     def get_maked_board(self) -> list:
         return self.__maked_board
 
+    """
     def __assign_color(self, s) -> str:
         ''' __assign_color()
         Asinga el color a un numero dependiendo su posición s = (i, j).
@@ -29,6 +27,7 @@ class Sudoku:
         j_key = s[1] // 3
 
         return SUDOKU_COLORS[str(i_key) + str(j_key)]
+    """
 
     def print_board(self):
         ''' print_board()
@@ -38,11 +37,7 @@ class Sudoku:
         for i in range(self.__row_len):
             print('-------------------------------------')
             for j in range(self.__col_len):
-                print('| {}{}{} '.format(
-                    self.__assign_color((i, j)),
-                    self.__board[i][j],
-                    RESET
-                ), end='')
+                print('| {} '.format(self.__board[i][j]), end='')
 
             print('|')
         print('-------------------------------------')
@@ -55,11 +50,7 @@ class Sudoku:
         for i in range(self.__row_len):
             print('-------------------------------------')
             for j in range(self.__col_len):
-                print('| {}{}{} '.format(
-                    self.__assign_color((i, j)),
-                    self.__maked_board[i][j],
-                    RESET
-                ), end='')
+                print('| {} '.format(self.__maked_board[i][j]), end='')
 
             print('|')
         print('-------------------------------------')
@@ -185,7 +176,7 @@ class Sudoku:
 
 
 class SamuraiSudoku:
-    def __init__(self, boards: dict):
+    def __init__(self, boards: list):
         # Lista de tablas sin hacer.
         self.__boards = boards
         # Lista de tablas iniciales.
@@ -373,12 +364,12 @@ class SamuraiSudoku:
                     self.__samurai_sudoku[ii][jj] = board[i][j]
                     jj += 1
                 ii += 1
-
+    """
     def __assign_color(self, i, j):
-        '''
-        Asigna un color a cada región al imprimir la tabla FINAL 
-        dependiendo la región.
-        '''
+    '''
+    Asigna un color a cada región al imprimir la tabla FINAL
+    dependiendo la región.
+    '''
 
         i_key = i // 3
         j_key = j // 3
@@ -390,30 +381,46 @@ class SamuraiSudoku:
                 return SAMURAI_COLORS[key]
 
         return -1
+    """
+
+    def __print_line(self, i=0):
+        '''
+        Método para imprimir las líneas horizontales del tablero
+        '''
+
+        # Líneas que deben ser Líneas completas y no con espacio
+        lines = (6, 9, 12, 15)
+
+        if i % 3 == 0:
+            print('-------------------------------------', end='')
+            print('-----------' if i in lines else '           ', end='')
+            print('-------------------------------------')
+        else:
+            print('')
 
     def print_maked_table(self):
+        '''
+        Método para imprimir la tabla
+        '''
+
         for i in range(21):
-            print(
-                '-------------------------------------------' +
-                '------------------------------------------'
-            )
+            self.__print_line(i)
+
             for j in range(21):
                 if self.__samurai_sudoku[i][j] != ' ':
-                    print('| {}{}{} '.format(
-                        self.__assign_color(i, j),
-                        self.__samurai_sudoku[i][j],
-                        RESET
-                    ),
+                    print('|' if j % 3 == 0 else ' ', end='')
+                    print(' {} '.format(self.__samurai_sudoku[i][j]), end='')
+
+                else:
+                    print(
+                        '|   ' if self.__samurai_sudoku[i][j-1] !=
+                        ' ' else '    ',
                         end=''
                     )
 
-                else:
-                    print('|   ', end='')
-            print('|')
-        print(
-            '-------------------------------------------' +
-            '------------------------------------------'
-        )
+            print('|' if self.__samurai_sudoku[i][20] != ' ' else ' ')
+
+        self.__print_line()
 
     def solve(self):
         self.__join_boards()
