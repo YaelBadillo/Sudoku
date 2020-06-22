@@ -400,7 +400,7 @@ class SamuraiSudoku:
 
     def print_maked_table(self):
         '''
-        Método para imprimir la tabla
+        Método para imprimir la tablero
         '''
 
         for i in range(21):
