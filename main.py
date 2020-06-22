@@ -1,4 +1,4 @@
-from table import *
+from tables import *
 from sudoku import SamuraiSudoku
 
 
